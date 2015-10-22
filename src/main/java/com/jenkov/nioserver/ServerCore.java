@@ -12,15 +12,16 @@ import java.util.*;
  */
 public class ServerCore implements Runnable {
 
-    private MessageBuffer  readMessageBuffer  = null;
-    private MessageBuffer  writeMessageBuffer = null;
-    private Queue<Socket>  inboundSocketQueue = null;
-    private Queue<Message> outboundMessageQueue = new LinkedList<>(); //todo use a better / faster queue.
+    private Queue<Socket>  inboundSocketQueue   = null;
 
-    private Map<Long, Socket> socketMap       = new HashMap<>();
+    private MessageBuffer  readMessageBuffer    = null; //todo   Not used now - but perhaps will be later - to check for space in the buffer before reading from sockets
+    private MessageBuffer  writeMessageBuffer   = null; //todo   Not used now - but perhaps will be later - to check for space in the buffer before reading from sockets (space for more to write?)
 
     private IMessageReaderFactory messageReaderFactory = null;
-    private IMessageWriterFactory messageWriterFactory = null;
+
+    private Queue<Message> outboundMessageQueue = new LinkedList<>(); //todo use a better / faster queue.
+
+    private Map<Long, Socket> socketMap         = new HashMap<>();
 
     private ByteBuffer readByteBuffer  = ByteBuffer.allocate(1024 * 1024);
     private ByteBuffer writeByteBuffer = ByteBuffer.allocate(1024 * 1024);
@@ -36,7 +37,7 @@ public class ServerCore implements Runnable {
     private Set<Socket> nonEmptyToEmptySockets = new HashSet<>();
 
 
-    public ServerCore(Queue<Socket> inboundSocketQueue, MessageBuffer readMessageBuffer, MessageBuffer writeMessageBuffer, IMessageReaderFactory messageReaderFactory, IMessageWriterFactory messageWriterFactory, IMessageProcessor messageProcessor) throws IOException {
+    public ServerCore(Queue<Socket> inboundSocketQueue, MessageBuffer readMessageBuffer, MessageBuffer writeMessageBuffer, IMessageReaderFactory messageReaderFactory, IMessageProcessor messageProcessor) throws IOException {
         this.inboundSocketQueue = inboundSocketQueue;
 
         this.readMessageBuffer    = readMessageBuffer;
@@ -44,7 +45,6 @@ public class ServerCore implements Runnable {
         this.writeProxy           = new WriteProxy(writeMessageBuffer, this.outboundMessageQueue);
 
         this.messageReaderFactory = messageReaderFactory;
-        this.messageWriterFactory = messageWriterFactory;
 
         this.messageProcessor     = messageProcessor;
 
@@ -84,7 +84,7 @@ public class ServerCore implements Runnable {
             newSocket.socketChannel.configureBlocking(false);
 
             newSocket.messageReader = this.messageReaderFactory.createMessageReader();
-            newSocket.messageWriter = this.messageWriterFactory.createMessageWriter();
+            newSocket.messageWriter = new MessageWriter();
 
             this.socketMap.put(newSocket.socketId, newSocket);
 
@@ -128,6 +128,7 @@ public class ServerCore implements Runnable {
         }
 
         if(socket.endOfStreamReached){
+            System.out.println("Socket closed: " + socket.socketId);
             this.socketMap.remove(socket.socketId);
             key.attach(null);
             key.cancel();
@@ -147,9 +148,7 @@ public class ServerCore implements Runnable {
         // Register all sockets that *have* data and which are not yet registered.
         registerNonEmptySockets();
 
-
         // Select from the Selector.
-
         int writeReady = this.writeSelector.selectNow();
 
         if(writeReady > 0){
@@ -185,6 +184,7 @@ public class ServerCore implements Runnable {
     private void cancelEmptySockets() {
         for(Socket socket : nonEmptyToEmptySockets){
             SelectionKey key = socket.socketChannel.keyFor(this.writeSelector);
+
             key.cancel();
         }
         nonEmptyToEmptySockets.clear();
@@ -196,7 +196,7 @@ public class ServerCore implements Runnable {
             Socket socket = this.socketMap.get(outMessage.socketId);
 
             if(socket != null){
-                IMessageWriter messageWriter = socket.messageWriter;
+                MessageWriter messageWriter = socket.messageWriter;
                 if(messageWriter.isEmpty()){
                     messageWriter.enqueue(outMessage);
                     nonEmptyToEmptySockets.remove(socket);

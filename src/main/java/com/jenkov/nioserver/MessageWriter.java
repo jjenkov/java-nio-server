@@ -8,7 +8,7 @@ import java.util.List;
 /**
  * Created by jjenkov on 21-10-2015.
  */
-public class MessageWriter implements IMessageWriter {
+public class MessageWriter {
 
     private List<Message> writeQueue   = new ArrayList<>();
     private Message  messageInProgress = null;
@@ -17,25 +17,15 @@ public class MessageWriter implements IMessageWriter {
     public MessageWriter() {
     }
 
-    @Override
     public void enqueue(Message message) {
         if(this.messageInProgress == null){
             this.messageInProgress = message;
-            System.out.println("Message set as message in progress.");
         } else {
             this.writeQueue.add(message);
-            System.out.println("Message enqueued.");
         }
-
-        //todo register socket for write interest
-
     }
 
-
-    @Override
     public void write(Socket socket, ByteBuffer byteBuffer) throws IOException {
-        System.out.println("Writing message to socket");
-
         byteBuffer.put(this.messageInProgress.sharedArray, this.messageInProgress.offset + this.bytesWritten, this.messageInProgress.length - this.bytesWritten);
         byteBuffer.flip();
 
@@ -52,8 +42,8 @@ public class MessageWriter implements IMessageWriter {
         }
     }
 
-    @Override
     public boolean isEmpty() {
         return this.writeQueue.isEmpty() && this.messageInProgress == null;
     }
+
 }
