@@ -20,8 +20,12 @@ public class HttpMessageReader implements IMessageReader {
     private List<Message> completeMessages = new ArrayList<Message>();
     private Message       nextMessage      = null;
 
-    public HttpMessageReader(MessageBuffer messageBuffer) {
-        this.messageBuffer        = messageBuffer;
+    public HttpMessageReader() {
+    }
+
+    @Override
+    public void init(MessageBuffer readMessageBuffer) {
+        this.messageBuffer        = readMessageBuffer;
         this.nextMessage          = messageBuffer.getMessage();
         this.nextMessage.metaData = new HttpHeaders();
     }

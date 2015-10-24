@@ -10,7 +10,7 @@ import java.util.*;
 /**
  * Created by jjenkov on 16-10-2015.
  */
-public class ServerCore implements Runnable {
+public class SocketProcessor implements Runnable {
 
     private Queue<Socket>  inboundSocketQueue   = null;
 
@@ -37,7 +37,7 @@ public class ServerCore implements Runnable {
     private Set<Socket> nonEmptyToEmptySockets = new HashSet<>();
 
 
-    public ServerCore(Queue<Socket> inboundSocketQueue, MessageBuffer readMessageBuffer, MessageBuffer writeMessageBuffer, IMessageReaderFactory messageReaderFactory, IMessageProcessor messageProcessor) throws IOException {
+    public SocketProcessor(Queue<Socket> inboundSocketQueue, MessageBuffer readMessageBuffer, MessageBuffer writeMessageBuffer, IMessageReaderFactory messageReaderFactory, IMessageProcessor messageProcessor) throws IOException {
         this.inboundSocketQueue = inboundSocketQueue;
 
         this.readMessageBuffer    = readMessageBuffer;
@@ -84,6 +84,8 @@ public class ServerCore implements Runnable {
             newSocket.socketChannel.configureBlocking(false);
 
             newSocket.messageReader = this.messageReaderFactory.createMessageReader();
+            newSocket.messageReader.init(this.readMessageBuffer);
+
             newSocket.messageWriter = new MessageWriter();
 
             this.socketMap.put(newSocket.socketId, newSocket);

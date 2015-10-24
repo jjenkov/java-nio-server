@@ -17,7 +17,6 @@ public class Socket {
 
     public boolean endOfStreamReached = false;
 
-
     public Socket() {
     }
 
@@ -39,7 +38,6 @@ public class Socket {
 
         return totalBytesRead;
     }
-
 
     public int write(ByteBuffer byteBuffer) throws IOException{
         int bytesWritten      = this.socketChannel.write(byteBuffer);

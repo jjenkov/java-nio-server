@@ -13,16 +13,6 @@ import java.util.concurrent.BlockingQueue;
 public class Main {
 
     public static void main(String[] args) throws IOException {
-        BlockingQueue inboundSocketQueue = new ArrayBlockingQueue(1024);
-
-        Server server = new Server(9999, inboundSocketQueue);
-
-        Thread serverThread = new Thread(server);
-        serverThread.start();
-
-        MessageBuffer readMessageBuffer  = new MessageBuffer();
-        MessageBuffer writeMessageBuffer = new MessageBuffer();
-        IMessageReaderFactory messageReaderFactory = new HttpMessageReaderFactory(readMessageBuffer);
 
         String httpResponse = "HTTP/1.1 200 OK\r\n" +
                 "Content-Length: 38\r\n" +
@@ -42,9 +32,10 @@ public class Main {
             writeProxy.enqueue(response);
         };
 
-        ServerCore serverCore       = new ServerCore(inboundSocketQueue, readMessageBuffer, writeMessageBuffer, messageReaderFactory, messageProcessor);
-        Thread     serverCoreThread = new Thread(serverCore);
-        serverCoreThread.start();
+        Server server = new Server(9999, new HttpMessageReaderFactory(), messageProcessor);
+
+        server.start();
+
     }
 
 

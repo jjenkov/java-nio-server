@@ -9,14 +9,11 @@ import com.jenkov.nioserver.MessageBuffer;
  */
 public class HttpMessageReaderFactory implements IMessageReaderFactory {
 
-    private MessageBuffer messageBuffer = null;
-
-    public HttpMessageReaderFactory(MessageBuffer messageBuffer) {
-        this.messageBuffer = messageBuffer;
+    public HttpMessageReaderFactory() {
     }
 
     @Override
     public IMessageReader createMessageReader() {
-        return new HttpMessageReader(this.messageBuffer);
+        return new HttpMessageReader();
     }
 }

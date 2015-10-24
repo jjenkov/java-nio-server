@@ -1,54 +1,46 @@
 package com.jenkov.nioserver;
 
 import java.io.IOException;
-import java.net.InetSocketAddress;
-import java.net.ServerSocket;
-import java.nio.channels.ServerSocketChannel;
-import java.nio.channels.SocketChannel;
 import java.util.Queue;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.BlockingQueue;
 
 /**
- * Created by jjenkov on 19-10-2015.
+ * Created by jjenkov on 24-10-2015.
  */
-public class Server implements Runnable{
+public class Server {
+
+    private SocketAccepter  socketAccepter  = null;
+    private SocketProcessor socketProcessor = null;
 
     private int tcpPort = 0;
-    private ServerSocketChannel serverSocket = null;
+    private IMessageReaderFactory messageReaderFactory = null;
+    private IMessageProcessor     messageProcessor = null;
 
-    private Queue socketQueue = null;
+    public Server(int tcpPort, IMessageReaderFactory messageReaderFactory, IMessageProcessor messageProcessor) {
+        this.tcpPort = tcpPort;
+        this.messageReaderFactory = messageReaderFactory;
+        this.messageProcessor = messageProcessor;
+    }
 
-    public Server(int tcpPort, Queue socketQueue)  {
-        this.tcpPort     = tcpPort;
-        this.socketQueue = socketQueue;
+    public void start() throws IOException {
+
+        Queue socketQueue = new ArrayBlockingQueue(1024); //move 1024 to ServerConfig
+
+        this.socketAccepter  = new SocketAccepter(tcpPort, socketQueue);
+
+
+        MessageBuffer readBuffer  = new MessageBuffer();
+        MessageBuffer writeBuffer = new MessageBuffer();
+
+        this.socketProcessor = new SocketProcessor(socketQueue, readBuffer, writeBuffer,  this.messageReaderFactory, this.messageProcessor);
+
+        Thread accepterThread  = new Thread(this.socketAccepter);
+        Thread processorThread = new Thread(this.socketProcessor);
+
+        accepterThread.start();
+        processorThread.start();
     }
 
 
-
-    public void run() {
-        try{
-            this.serverSocket = ServerSocketChannel.open();
-            this.serverSocket.bind(new InetSocketAddress(tcpPort));
-        } catch(IOException e){
-            e.printStackTrace();
-            return;
-        }
-
-
-        while(true){
-            try{
-                SocketChannel socketChannel = this.serverSocket.accept();
-
-                System.out.println("Socket accepted");
-
-                //todo check if the queue can even accept more sockets.
-                this.socketQueue.add(new Socket(socketChannel));
-
-
-            } catch(IOException e){
-                e.printStackTrace();
-            }
-
-        }
-
-    }
 }
