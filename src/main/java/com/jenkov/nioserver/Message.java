@@ -94,6 +94,7 @@ public class Message {
         int lengthOfPartialMessage     = (message.offset + message.length) - endIndex;
 
         System.arraycopy(message.sharedArray, startIndexOfPartialMessage, this.sharedArray, this.offset, lengthOfPartialMessage);
+        this.length=this.length+lengthOfPartialMessage;
     }
 
     public int writeToByteBuffer(ByteBuffer byteBuffer){
