@@ -16,5 +16,4 @@ public interface IMessageReader {
     public List<Message> getMessages();
 
 
-
 }
