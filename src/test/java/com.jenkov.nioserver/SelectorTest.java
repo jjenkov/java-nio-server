@@ -1,12 +1,12 @@
 package com.jenkov.nioserver;
 
-import org.junit.Test;
-
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.nio.channels.SocketChannel;
+
+import org.junit.Test;
 
 /**
  * Created by jjenkov on 21-10-2015.
@@ -27,7 +27,6 @@ public class SelectorTest {
 
         SelectionKey key2 = socketChannel.register(selector, SelectionKey.OP_WRITE);
         key2.cancel();
-
 
 
     }

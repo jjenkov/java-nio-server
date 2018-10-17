@@ -11,9 +11,9 @@ public class Socket {
 
     public long socketId;
 
-    public SocketChannel  socketChannel = null;
+    public SocketChannel socketChannel = null;
     public IMessageReader messageReader = null;
-    public MessageWriter  messageWriter = null;
+    public MessageWriter messageWriter = null;
 
     public boolean endOfStreamReached = false;
 
@@ -28,22 +28,22 @@ public class Socket {
         int bytesRead = this.socketChannel.read(byteBuffer);
         int totalBytesRead = bytesRead;
 
-        while(bytesRead > 0){
+        while (bytesRead > 0) {
             bytesRead = this.socketChannel.read(byteBuffer);
             totalBytesRead += bytesRead;
         }
-        if(bytesRead == -1){
+        if (bytesRead == -1) {
             this.endOfStreamReached = true;
         }
 
         return totalBytesRead;
     }
 
-    public int write(ByteBuffer byteBuffer) throws IOException{
-        int bytesWritten      = this.socketChannel.write(byteBuffer);
+    public int write(ByteBuffer byteBuffer) throws IOException {
+        int bytesWritten = this.socketChannel.write(byteBuffer);
         int totalBytesWritten = bytesWritten;
 
-        while(bytesWritten > 0 && byteBuffer.hasRemaining()){
+        while (bytesWritten > 0 && byteBuffer.hasRemaining()) {
             bytesWritten = this.socketChannel.write(byteBuffer);
             totalBytesWritten += bytesWritten;
         }

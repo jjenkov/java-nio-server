@@ -1,14 +1,11 @@
 package com.jenkov.nioserver;
 
-import org.junit.Test;
-
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNotSame;
 
 import java.nio.ByteBuffer;
+
+import org.junit.Test;
 
 
 /**
@@ -21,7 +18,7 @@ public class MessageTest {
     public void testWriteToMessage() {
         MessageBuffer messageBuffer = new MessageBuffer();
 
-        Message    message    = messageBuffer.getMessage();
+        Message message = messageBuffer.getMessage();
         ByteBuffer byteBuffer = ByteBuffer.allocate(1024 * 1024);
 
         fill(byteBuffer, 4096);
@@ -37,9 +34,9 @@ public class MessageTest {
         assertEquals(128 * 1024, message.length);
         assertSame(messageBuffer.mediumMessageBuffer, message.sharedArray);
 
-        fill(byteBuffer, (1024-128) * 1024);
+        fill(byteBuffer, (1024 - 128) * 1024);
         written = message.writeToMessage(byteBuffer);
-        assertEquals(896  * 1024, written);
+        assertEquals(896 * 1024, written);
         assertEquals(1024 * 1024, message.length);
         assertSame(messageBuffer.largeMessageBuffer, message.sharedArray);
 
@@ -49,10 +46,10 @@ public class MessageTest {
 
     }
 
-    private void fill(ByteBuffer byteBuffer, int length){
+    private void fill(ByteBuffer byteBuffer, int length) {
         byteBuffer.clear();
-        for(int i=0; i<length; i++){
-            byteBuffer.put((byte) (i%128));
+        for (int i = 0; i < length; i++) {
+            byteBuffer.put((byte)(i % 128));
         }
         byteBuffer.flip();
     }
