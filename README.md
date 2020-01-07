@@ -16,4 +16,7 @@ and switch between the two modes as you see fit. You can find Net Ops here:
 
 [https://github.com/nanosai/net-ops-java](https://github.com/nanosai/net-ops-java)
 
+I have been able to "echo" around 200.000 messages per second with Net Ops (in early versions), coming from 3 clients running on the same machine, against a single-threaded server - on a Quad core CPU.
 
+Net Ops has several smaller improvements in the design and functionality over the server you see in this project, so if you really want
+to study a more robust non-blocking IO client / server design, look at Net Ops too.
