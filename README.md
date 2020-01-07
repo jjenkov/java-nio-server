@@ -14,6 +14,6 @@ By the way, I am working a real, usable non-blocking client-server API called "N
 That project contains both a client and a server, and you can use both client and server using both blocking and non-blocking methods,
 and switch between the two modes as you see fit. You can find Net Ops here:
 
-(https://github.com/nanosai/net-ops-java)
+[https://github.com/nanosai/net-ops-java](https://github.com/nanosai/net-ops-java)
 
 
