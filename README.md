@@ -17,3 +17,8 @@ You can add that yourself, easily.
 
 Also, the memory buffer's design could be improved to just use a single, contiguous memory array. I have that working elsewhere, but just not implemented here.
 
+## Virtual Threads
+After the introduction of virtual threads in Java, a server design using single-threaded non-blocking IO is not nearly as attractive anymore.
+It might still have it uses in router-type servers, where messages come in on one connection, and has to be sent out again on another. 
+But traditional servers where the response is sent back to the same connection as the request came from, are probably easier to implement using
+virtual threads.
