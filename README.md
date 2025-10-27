@@ -7,16 +7,13 @@ The design is explained in this tutorial:
 
 [Java NIO Non-blocking Server](http://tutorials.jenkov.com/java-nio/non-blocking-server.html)
 
-
 Because this is an example app - this project will NOT accept feature requests. If there are any obvious bugs in the code, I can fix those, but apart from that, the code has to stay as it is.
 
-By the way, I am working a real, usable non-blocking client-server API called "Nanosai Net Ops" - based on the designs of this project.
-That project contains both a client and a server, and you can use both client and server using both blocking and non-blocking methods,
-and switch between the two modes as you see fit. You can find Net Ops here:
+## Bugs and Improvements:
+This server implementation has bugs - and room for improvement.
 
-[https://github.com/nanosai/net-ops-java](https://github.com/nanosai/net-ops-java)
+For instance, memory is never returned to the memory buffer from which they are borrowed (allocated).
+You can add that yourself, easily. 
 
-I have been able to "echo" around 200.000 messages per second with Net Ops (in early versions), coming from 3 clients running on the same machine, against a single-threaded server - on a Quad core CPU.
+Also, the memory buffer's design could be improved to just use a single, contiguous memory array. I have that working elsewhere, but just not implemented here.
 
-Net Ops has several smaller improvements in the design and functionality over the server you see in this project, so if you really want
-to study a more robust non-blocking IO client / server design, look at Net Ops too.
